@@ -16,6 +16,8 @@ import com.dev.project.security.UserSS;
 import com.dev.project.services.AuthService;
 import com.dev.project.services.UserService;
 
+import io.swagger.annotations.ApiOperation;
+
 @RestController
 @RequestMapping(value="/auth")
 public class AuthResource {
@@ -26,6 +28,7 @@ public class AuthResource {
 	@Autowired
 	private AuthService authService;
 	
+	@ApiOperation(value="Retorna um novo token válido e atualizado")
 	@RequestMapping(value = "/refresh_token", method = RequestMethod.POST)
 	public ResponseEntity<Void> refreshToken(HttpServletResponse response) {
 		UserSS user = UserService.authenticated();
@@ -35,6 +38,7 @@ public class AuthResource {
 		return ResponseEntity.noContent().build();
 	}
 	
+	@ApiOperation(value="Redefine a senha do usuário informado")
 	@RequestMapping(value = "/forgot", method = RequestMethod.POST)
 	public ResponseEntity<Void> forgot(@Valid @RequestBody EmailDTO objDTO) {
 		authService.sendNewPassword(objDTO.getEmail());
