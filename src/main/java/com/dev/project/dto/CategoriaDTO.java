@@ -8,6 +8,11 @@ import org.hibernate.validator.constraints.Length;
 
 import com.dev.project.domain.Categoria;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class CategoriaDTO implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
@@ -23,21 +28,5 @@ public class CategoriaDTO implements Serializable{
 	public CategoriaDTO(Categoria obj) {
 		setId(obj.getId());
 		setNome(obj.getNome());
-	}
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
 	}
 }
