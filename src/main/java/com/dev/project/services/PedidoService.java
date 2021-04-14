@@ -15,6 +15,7 @@ import com.dev.project.domain.ItemPedido;
 import com.dev.project.domain.PagamentoComBoleto;
 import com.dev.project.domain.Pedido;
 import com.dev.project.domain.enums.EstadoPagamento;
+import com.dev.project.domain.enums.Perfil;
 import com.dev.project.repositories.ItemPedidoRepository;
 import com.dev.project.repositories.PagamentoRepository;
 import com.dev.project.repositories.PedidoRepository;
@@ -47,6 +48,12 @@ public class PedidoService {
 	private EmailService emailService;
 
 	public Pedido find(Integer id) {
+		
+		UserSS user = UserService.authenticated();
+		
+		if(user == null || !user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())) {
+			throw new AuthorizationException("Acesso negado!");
+		}
 		Optional<Pedido> obj = repo.findById(id);
 		return obj.orElseThrow(() -> new ObjectNotFoundException("Objeto não encontrado! Id: "+id
 																+", Tipo: "+Pedido.class.getName()));
