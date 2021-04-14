@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dev.project.domain.Cliente;
+import com.dev.project.domain.Endereco;
 import com.dev.project.domain.ItemPedido;
 import com.dev.project.domain.PagamentoComBoleto;
 import com.dev.project.domain.Pedido;
@@ -21,6 +22,7 @@ import com.dev.project.repositories.PagamentoRepository;
 import com.dev.project.repositories.PedidoRepository;
 import com.dev.project.security.UserSS;
 import com.dev.project.services.exceptions.AuthorizationException;
+import com.dev.project.services.exceptions.DataIntegrityException;
 import com.dev.project.services.exceptions.ObjectNotFoundException;
 
 @Service
@@ -59,11 +61,25 @@ public class PedidoService {
 																+", Tipo: "+Pedido.class.getName()));
 	}
 	
+	private boolean containsEndereco(Cliente cliente, Integer idEndereco) {
+		for(Endereco e : cliente.getEnderecos()) {
+			if(e.getId() == idEndereco) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	@Transactional
 	public Pedido insert(Pedido obj) {
 		obj.setId(null);
 		obj.setInstante(new Date());
-		obj.setCliente(clienteService.find(obj.getCliente().getId()));
+		Cliente cliente = clienteService.find(obj.getCliente().getId());
+		obj.setCliente(cliente);
+		int idEndereco = obj.getEnderecoDeEntrega().getId();
+		if(!containsEndereco(cliente, idEndereco)) {
+			throw new DataIntegrityException("O endereço informado não pertence ao cliente!");
+		}
 		obj.getPagamento().setEstado(EstadoPagamento.PENDENTE);
 		obj.getPagamento().setPedido(obj);
 		if(obj.getPagamento() instanceof PagamentoComBoleto) {
