@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.dev.project.domain.Cliente;
+import com.dev.project.dto.ClienteCpDTO;
 import com.dev.project.dto.ClienteDTO;
 import com.dev.project.dto.ClienteNewDTO;
 import com.dev.project.services.ClienteService;
@@ -64,6 +65,15 @@ public class ClienteResource {
 		Cliente obj = service.fromDTO(objDTO);
 		obj.setId(id);
 		obj = service.update(obj);
+		return ResponseEntity.noContent().build();
+	}
+	
+	@ApiOperation(value="Altera a senha")
+	@RequestMapping(value="/{id}/change-password", method=RequestMethod.PUT)
+	public ResponseEntity<Void> changePassword(@Valid @RequestBody ClienteCpDTO objDTO, @PathVariable Integer id){
+		Cliente obj = service.fromDTO(objDTO);
+		obj.setId(id);
+		obj = service.changePassword(obj);
 		return ResponseEntity.noContent().build();
 	}
 	

@@ -21,6 +21,7 @@ import com.dev.project.domain.Cliente;
 import com.dev.project.domain.Endereco;
 import com.dev.project.domain.enums.Perfil;
 import com.dev.project.domain.enums.TipoCliente;
+import com.dev.project.dto.ClienteCpDTO;
 import com.dev.project.dto.ClienteDTO;
 import com.dev.project.dto.ClienteNewDTO;
 import com.dev.project.repositories.ClienteRepository;
@@ -82,6 +83,12 @@ public class ClienteService {
 		return repo.save(newObj);
 	}
 	
+	public Cliente changePassword(Cliente obj) {
+		Cliente newObj = find(obj.getId());
+		updateSenha(newObj, obj);
+		return repo.save(newObj);
+	}
+
 	public void delete(Integer id) {
 		find(id);
 		try {
@@ -117,6 +124,10 @@ public class ClienteService {
 		return new Cliente(objDTO.getId(), objDTO.getNome(), objDTO.getEmail(), null, null, null);
 	}
 	
+	public Cliente fromDTO(ClienteCpDTO objDTO) {
+		return new Cliente(objDTO.getId(), null, null, null, null, pe.encode(objDTO.getSenha()));
+	}
+	
 	public Cliente fromDTO(ClienteNewDTO objDTO) {
 		Cliente cli = new Cliente(null, objDTO.getNome(), objDTO.getEmail(),
 				objDTO.getCpfOuCnpj(), TipoCliente.toEnum(objDTO.getTipo()), pe.encode(objDTO.getSenha()));
@@ -141,6 +152,10 @@ public class ClienteService {
 	private void updateData(Cliente newObj, Cliente obj) {
 		newObj.setNome(obj.getNome());
 		newObj.setEmail(obj.getEmail());
+	}
+
+	private void updateSenha(Cliente newObj, Cliente obj) {
+		newObj.setSenha(obj.getSenha());
 	}
 	
 	public URI uploadProfilePicture(MultipartFile multipartFile) {

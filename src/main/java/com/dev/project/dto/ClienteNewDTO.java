@@ -31,6 +31,7 @@ public class ClienteNewDTO implements Serializable{
 
 	private Integer tipo;
 
+	@Length(min=8, message="A senha deve conter ao menos 8 caracteres.")
 	@NotEmpty(message="Preenchimento obrigatório.")
 	private String senha;
 	
