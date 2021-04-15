@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -32,6 +33,7 @@ public class Produto implements Serializable{
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@EqualsAndHashCode.Include
 	private Integer id;
+	@Column(unique = true, nullable = false)
 	private String nome;
 	private Double preco;
 	

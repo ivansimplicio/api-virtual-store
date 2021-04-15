@@ -30,7 +30,12 @@ public class CategoriaService {
 	
 	public Categoria insert(Categoria obj) {
 		obj.setId(null);
-		return repo.save(obj);
+		try {
+			obj = repo.save(obj);
+		}catch(DataIntegrityViolationException e) {
+			throw new DataIntegrityException("Categoria já cadastrada!");
+		}
+		return obj;
 	}
 	
 	public Categoria update(Categoria obj) {
