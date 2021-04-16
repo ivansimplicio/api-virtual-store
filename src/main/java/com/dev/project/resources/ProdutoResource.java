@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.dev.project.domain.Produto;
@@ -67,5 +68,15 @@ public class ProdutoResource {
 		Page<Produto> list = service.search(nomeDecoded, ids, page, linesPerPage, orderBy, direction);
 		Page<ProdutoDTO> listDTO = list.map(obj -> new ProdutoDTO(obj));
 		return ResponseEntity.ok().body(listDTO);
+	}
+	
+	@ApiOperation(value="Envia uma imagem para o produto especificado")
+	@PreAuthorize("hasAnyRole('ADMIN')")
+	@RequestMapping(value="/{id}/picture", method=RequestMethod.POST)
+	public ResponseEntity<Void> uploadProfilePicture(
+			@RequestParam(name="file") MultipartFile multipartFile,
+			@PathVariable Integer id){
+		URI uri = service.uploadProfilePicture(id, multipartFile);	
+		return ResponseEntity.created(uri).build();
 	}
 }

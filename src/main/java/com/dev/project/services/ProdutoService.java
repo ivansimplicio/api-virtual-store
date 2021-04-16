@@ -1,15 +1,19 @@
 package com.dev.project.services;
 
+import java.awt.image.BufferedImage;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.dev.project.domain.Categoria;
 import com.dev.project.domain.Produto;
@@ -30,6 +34,24 @@ public class ProdutoService {
 	
 	@Autowired
 	private CategoriaRepository categoriaRepository;
+	
+	@Value("${img.prefix.product.image}")
+	private String prefix;
+	
+	@Value("${img.suffix.product.image}")
+	private String suffix;
+	
+	@Value("${img.profile.size}")
+	private Integer sizeThumb;
+	
+	@Value("${img.size.standard}")
+	private Integer sizeStandard;
+	
+	@Autowired
+	private ImageService imageService;
+	
+	@Autowired
+	private S3Service s3Service;
 
 	public Produto find(Integer id) {
 		Optional<Produto> obj = repo.findById(id);
@@ -66,5 +88,22 @@ public class ProdutoService {
 			obj.getCategorias().add(new Categoria(idCat, null));
 		}
 		return obj;
+	}
+
+	public URI uploadProfilePicture(Integer id, MultipartFile multipartFile) {
+		find(id);
+		BufferedImage jpgImage = imageService.getJpgImageFromFile(multipartFile);
+		
+		BufferedImage thumbImage = imageService.cropSquare(jpgImage);
+		thumbImage = imageService.resize(jpgImage, sizeThumb);
+		
+		BufferedImage standardImage = imageService.cropSquare(jpgImage);
+		standardImage = imageService.resize(jpgImage, sizeStandard);
+		
+		String fileNameThumbImage = prefix + id + suffix + ".jpg";
+		String fileNameStandardImage = prefix + id + ".jpg";
+		
+		s3Service.uploadFile(imageService.getInputStream(thumbImage, "jpg"), fileNameThumbImage, "image");
+		return s3Service.uploadFile(imageService.getInputStream(standardImage, "jpg"), fileNameStandardImage, "image");
 	}
 }
