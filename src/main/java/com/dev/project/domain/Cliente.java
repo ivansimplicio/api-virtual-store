@@ -26,7 +26,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
+@Entity(name = "clientes")
 @Getter
 @Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -52,7 +52,7 @@ public class Cliente implements Serializable{
 	private List<Endereco> enderecos = new ArrayList<>();
 	
 	@ElementCollection
-	@CollectionTable(name="TELEFONE")
+	@CollectionTable(name="TELEFONES")
 	private Set<String> telefones = new HashSet<>();
 	
 	@ElementCollection(fetch=FetchType.EAGER)

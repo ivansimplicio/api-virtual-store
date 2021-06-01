@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
+@Entity(name = "pagamentos_com_cartao")
 @JsonTypeName("pagamentoComCartao")
 @Getter
 @Setter

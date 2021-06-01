@@ -17,7 +17,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
+@Entity(name = "estados")
 @Getter
 @Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)

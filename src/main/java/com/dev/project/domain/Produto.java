@@ -22,7 +22,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
+@Entity(name = "produtos")
 @Getter
 @Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)

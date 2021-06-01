@@ -26,7 +26,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
+@Entity(name = "pedidos")
 @Getter
 @Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
