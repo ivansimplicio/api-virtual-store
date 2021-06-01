@@ -58,6 +58,10 @@ public class ProdutoService {
 		return obj.orElseThrow(() -> new ObjectNotFoundException("Objeto não encontrado! Id: "+id
 																+", Tipo: "+Produto.class.getName()));
 	}
+	
+	public List<Produto> findAll(){
+		return repo.findAll();
+	}
 
 	public Produto insert(Produto obj) {
 		List<Categoria> categorias = new ArrayList<>();
@@ -67,13 +71,46 @@ public class ProdutoService {
 			categorias.add(aux);
 		}
 		obj.setCategorias(categorias);
+		return save(obj, categorias);
+	}
+	
+	public Produto update(Produto obj) {
+		Produto updateObj = find(obj.getId());
+		updateData(updateObj, obj);
+		
+		updateObj.getCategorias().clear();
+		List<Categoria> categorias = new ArrayList<>();
+		for(Categoria c : obj.getCategorias()) {
+			Categoria aux = categoriaService.find(c.getId());
+			aux.getProdutos().add(updateObj);
+			categorias.add(aux);
+		}
+		updateObj.setCategorias(categorias);
+		return save(updateObj, categorias);
+	}
+	
+	private Produto save(Produto obj, List<Categoria> cats) {
 		try {
 			obj = repo.save(obj);
 		}catch(DataIntegrityViolationException e) {
 			throw new DataIntegrityException("Produto já cadastrado!");
 		}
-		categoriaRepository.saveAll(categorias);
+		categoriaRepository.saveAll(cats);
 		return obj;
+	}
+	
+	private void updateData(Produto updateObj, Produto obj) {
+		updateObj.setNome(obj.getNome());
+		updateObj.setPreco(obj.getPreco());
+	}
+	
+	public void delete(Integer id) {
+		find(id);
+		try {
+			repo.deleteById(id);
+		}catch(DataIntegrityViolationException e) {
+			throw new DataIntegrityException("Não foi possível excluir o produto.");
+		}
 	}
 	
 	public Page<Produto> search(String nome, List<Integer> ids, Integer page, Integer linesPerPage, String orderBy, String direction){
