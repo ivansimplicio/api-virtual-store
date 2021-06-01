@@ -5,9 +5,9 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dev.project.dto.EmailDTO;
@@ -29,7 +29,7 @@ public class AuthResource {
 	private AuthService authService;
 	
 	@ApiOperation(value="Retorna um novo token válido e atualizado")
-	@RequestMapping(value = "/refresh_token", method = RequestMethod.POST)
+	@PostMapping(value = "/refresh_token")
 	public ResponseEntity<Void> refreshToken(HttpServletResponse response) {
 		UserSS user = UserService.authenticated();
 		String token = jwtUtil.generateToken(user.getUsername());
@@ -39,7 +39,7 @@ public class AuthResource {
 	}
 	
 	@ApiOperation(value="Redefine a senha do usuário informado")
-	@RequestMapping(value = "/forgot", method = RequestMethod.POST)
+	@PostMapping(value = "/forgot")
 	public ResponseEntity<Void> forgot(@Valid @RequestBody EmailDTO objDTO) {
 		authService.sendNewPassword(objDTO.getEmail());
 		return ResponseEntity.noContent().build();
