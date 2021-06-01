@@ -46,18 +46,22 @@ public class CategoriaService {
 	
 	public Categoria insert(Categoria obj) {
 		obj.setId(null);
+		return save(obj);
+	}
+	
+	public Categoria update(Categoria obj) {
+		Categoria newObj = find(obj.getId());
+		updateData(newObj, obj);
+		return save(newObj);
+	}
+	
+	private Categoria save(Categoria obj) {
 		try {
 			obj = repo.save(obj);
 		}catch(DataIntegrityViolationException e) {
 			throw new DataIntegrityException("Categoria já cadastrada!");
 		}
 		return obj;
-	}
-	
-	public Categoria update(Categoria obj) {
-		Categoria newObj = find(obj.getId());
-		updateData(newObj, obj);
-		return repo.save(newObj);
 	}
 	
 	public void delete(Integer id) {
